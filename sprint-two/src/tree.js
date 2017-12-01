@@ -1,20 +1,45 @@
-var Tree = function(value) {
+var Tree = function(value){
   var newTree = {};
   newTree.value = value;
+  newTree.parent = null;
 
   // your code here
-  newTree.children = null;  // fix me
+  newTree.children = [];  // fix me
+
+  _.extend(newTree, treeMethods);
 
   return newTree;
 };
 
 var treeMethods = {};
 
-treeMethods.addChild = function(value) {
+treeMethods.addChild = function(value){
+  var child = Tree(value);
+  child.parent = this;
+  this.children.push(child);
 };
 
-treeMethods.contains = function(target) {
+treeMethods.removeFromParent = function() {
+  var index = this.parent.children.indexOf(this);
+  this.parent.children.splice(index, 1);
+  this.parent = null;
 };
+
+
+treeMethods.contains = function(target){
+  if (this.value === target) return true;
+  return _.some(this.children, function(child) {
+    return child.contains(target);
+  });
+};
+
+treeMethods.traverse = function(cb) {
+  cb(this.value);
+  _.each(this.children, function(child) {
+    child.traverse(cb);
+  });
+};
+
 
 
 
